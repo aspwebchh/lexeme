@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main {
     private static final String HTTP_METHOD_GET = "GET";
@@ -22,33 +24,30 @@ public class Main {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         server.createContext("/create", new CreateWordHandler());
         server.createContext("/find", new FindWordHandler());
-        server.setExecutor(null);
+        server.setExecutor(Executors.newCachedThreadPool());
         server.start();
     }
 
     static abstract class BaseHandler implements HttpHandler{
         protected abstract String handle(Map<String,String> postData);
 
+        private static final ExecutorService es = Executors.newCachedThreadPool();
+
         @Override
         public void handle(HttpExchange exchange) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try{
-                        String response = "";
-                        String method = exchange.getRequestMethod();
-                        if(method.toLowerCase().equals(HTTP_METHOD_POST.toLowerCase())) {
-                            String postDataString = IOUtils.toString(exchange.getRequestBody());
-                            Map<String,String> postData = Common.formData2Dic(postDataString);
-                            response = handle(postData);
-                        }
-                        exchange.sendResponseHeaders(200, response.length());
-                        OutputStream os = exchange.getResponseBody();
-                        os.write(response.getBytes());
-                        os.close();
-                    } catch (IOException e) {}
+            try{
+                String response = "";
+                String method = exchange.getRequestMethod();
+                if(method.toLowerCase().equals(HTTP_METHOD_POST.toLowerCase())) {
+                    String postDataString = IOUtils.toString(exchange.getRequestBody());
+                    Map<String,String> postData = Common.formData2Dic(postDataString);
+                    response = handle(postData);
                 }
-            }).start();
+                exchange.sendResponseHeaders(200, response.length());
+                OutputStream os = exchange.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+            } catch (IOException e) {}
         }
     }
 

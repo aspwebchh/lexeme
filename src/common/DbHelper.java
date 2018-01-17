@@ -2,11 +2,18 @@ package common;
 
 import data.ProcSmtBuilder;
 
+import javax.naming.ConfigurationException;
 import java.sql.*;
 import java.util.*;
 
 
-public final class DbHelper {
+public class DbHelper {
+    public static Config config ;
+
+    static {
+        config   = Config.fromFile();
+    }
+
     private static List<Map> resultSet2List(ResultSet rs) {
         try{
             List<Map> list = new ArrayList<Map>();
@@ -30,9 +37,9 @@ public final class DbHelper {
         Connection conn = null;
         try {
             String driver = "com.mysql.jdbc.Driver";
-            String url = "";
-            String user = "";
-            String password = "";
+            String url = config.getDatabaseUrl();
+            String user = config.getDatabaseUser();
+            String password = config.getDatabasePassword();
             Class.forName(driver);
             if (null == conn) {
                 conn = DriverManager.getConnection(url, user, password);

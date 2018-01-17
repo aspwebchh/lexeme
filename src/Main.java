@@ -1,20 +1,23 @@
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import common.Common;
+import common.Config;
+import common.DbHelper;
 import common.ExecResult;
 import data.Data;
 import org.apache.commons.io.IOUtils;
 import org.javatuples.KeyValue;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 
 public class Main {
     private static final String HTTP_METHOD_GET = "GET";
@@ -31,8 +34,6 @@ public class Main {
     static abstract class BaseHandler implements HttpHandler{
         protected abstract String handle(Map<String,String> postData);
 
-        private static final ExecutorService es = Executors.newCachedThreadPool();
-
         @Override
         public void handle(HttpExchange exchange) {
             try{
@@ -47,7 +48,9 @@ public class Main {
                 OutputStream os = exchange.getResponseBody();
                 os.write(response.getBytes());
                 os.close();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -59,7 +62,6 @@ public class Main {
             String type = postData.get("type");
             String pageIndex = postData.get("page_index");
             String pageSize = postData.get("page_size");
-
             if(Common.isNullOrEmpty(text) || Common.isNullOrEmpty(sysKey) || Common.isNullOrEmpty(type) || Common.isNullOrEmpty(pageIndex)|| Common.isNullOrEmpty(pageSize)) {
                 return ExecResult.with(ExecResult.CODE_ERROR,"缺少参数").toJSON();
             }

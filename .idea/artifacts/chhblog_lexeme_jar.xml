@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="chhblog_lexeme:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/chhblog_lexeme_jar</output-path>
+    <root id="archive" name="chhblog_lexeme.jar">
+      <element id="module-output" name="chhblog_lexeme" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/mysql-connector-java-5.1.38-bin.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/commons-io-2.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/javatuples-1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/IKAnalyzer2012_u6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/fastjson-1.2.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/commons-lang.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

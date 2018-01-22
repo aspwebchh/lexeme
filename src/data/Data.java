@@ -79,4 +79,9 @@ public class Data {
         int[] wordIDs = getWordId(wordItems);
         return getDataId(wordIDs, sysId, type, pageIndex, pageSize);
     }
+
+    public static void  delete(int sysId, int type, int dataId ) {
+        String sql = "delete from word_dic where data_id = ? and type = ? and sys_id = ?";
+        DbHelper.executeNonQuery(sql,dataId,type,sysId);
+    }
 }

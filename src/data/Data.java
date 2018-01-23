@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class Data {
@@ -61,11 +62,32 @@ public class Data {
         }
         String limit = ((pageIndex - 1) * pageSize ) + "," + pageSize;
         String wordIdString = String.join(",", Arrays.asList(ArrayUtils.toObject(wordId)).stream().map(n->n.toString()).toArray(String[]::new));
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Integer> threadResult = executor.submit(new Callable<Integer>() {
+            @Override
+            public Integer call() {
+                String sqlForCount = "select count(distinct( data_id )) from word_dic where word_id in ("+ wordIdString +") and type =" + type + " and sys_id =" + sysId;
+                Integer count = Integer.parseInt( DbHelper.getSingle(sqlForCount).toString());
+                return count;
+            }
+        });
         String sql = "select distinct( data_id ) from word_dic where word_id in ("+ wordIdString +") and type =" + type + " and sys_id = "+ sysId +" order by count desc limit " + limit;
         List<Map> result = DbHelper.executeQuery(sql);
         Integer[] ids = result.stream().map(n-> Integer.parseInt( n.get("data_id").toString() ) ).toArray(Integer[]::new);
-        String sqlForCount = "select count(distinct( data_id )) from word_dic where word_id in ("+ wordIdString +") and type =" + type + " and sys_id =" + sysId;
-        int count = Integer.parseInt( DbHelper.getSingle(sqlForCount).toString());
+
+        int count = 0;
+        while(!threadResult.isDone()) {}
+        try {
+            count = threadResult.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        //String sqlForCount = "select count(distinct( data_id )) from word_dic where word_id in ("+ wordIdString +") and type =" + type + " and sys_id =" + sysId;
+        //int count = Integer.parseInt( DbHelper.getSingle(sqlForCount).toString());
         return KeyValue.with(ids,count);
     }
 

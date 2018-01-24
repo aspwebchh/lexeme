@@ -63,7 +63,7 @@ public class ExecResult<T> {
     }
 
     public String toJSON() {
-        return convert2JSON("code","message","data");
+        return convert2JSON("Code","Message","Data");
     }
 
     public String toJSON( String codeFieldName, String messageFieldName, String dataFieldName ) {

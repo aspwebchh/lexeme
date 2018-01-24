@@ -4,6 +4,7 @@ package web;
 import common.Common;
 import common.ExecResult;
 import data.Data;
+import data.FoundResult;
 import org.javatuples.KeyValue;
 
 import java.util.Map;
@@ -26,11 +27,11 @@ public class FindWordHandler extends BaseHandler{
         if(!Common.isInteger(type) || !Common.isInteger(pageSize)|| !Common.isInteger(pageIndex)) {
             return ExecResult.with(ExecResult.CODE_ERROR,"参数格式错误").toJSON();
         }
-        KeyValue<Integer[], Integer> result = Data.find(text,sysId,Integer.parseInt(type),Integer.parseInt(pageIndex),Integer.parseInt(pageSize));
+        FoundResult result = Data.find(text,sysId,Integer.parseInt(type),Integer.parseInt(pageIndex),Integer.parseInt(pageSize));
         ExecResult er = new ExecResult();
         er.setCode(ExecResult.CODE_SUCCESS);
         er.setMessage("");
-        er.setData(result);
+        er.setData(result.toData());
         return er.toJSON();
     }
 }

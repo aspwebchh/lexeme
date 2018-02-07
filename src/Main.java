@@ -16,7 +16,7 @@ public class Main {
         server.createContext("/create", new CreateWordHandler());
         server.createContext("/find", new FindWordHandler());
         server.createContext("/delete", new DelWordHandler());
-        server.setExecutor(Executors.newCachedThreadPool());
+        server.setExecutor(Executors.newFixedThreadPool(5));
         server.start();
     }
 }

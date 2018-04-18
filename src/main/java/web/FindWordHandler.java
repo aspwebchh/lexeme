@@ -3,6 +3,7 @@ package web;
 
 import common.Common;
 import common.ExecResult;
+import data.Cache;
 import data.Data;
 import data.FoundResult;
 import org.javatuples.KeyValue;
@@ -20,7 +21,7 @@ public class FindWordHandler extends BaseHandler{
         if(Common.isNullOrEmpty(text) || Common.isNullOrEmpty(sysKey) || Common.isNullOrEmpty(type) || Common.isNullOrEmpty(pageIndex)|| Common.isNullOrEmpty(pageSize)) {
             return ExecResult.with(ExecResult.CODE_ERROR,"缺少参数").toJSON();
         }
-        int sysId = Data.getSysId(sysKey);
+        int sysId = Cache.getSysId(sysKey);
         if( sysId <= 0) {
             return ExecResult.with(ExecResult.CODE_ERROR,"sys key 不存在").toJSON();
         }

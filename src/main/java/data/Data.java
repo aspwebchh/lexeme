@@ -6,14 +6,12 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.javatuples.KeyValue;
 
 import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class Data {
-    public static int getSysId(String key) {
+    static int getSysId(String key) {
         List<Map> result = DbHelper.executeQuery("select sys_id from system where sys_key = ?", key);
         if(result != null && result.size() > 0) {
             return Integer.parseInt( result.get(0).get("sys_id").toString() );
@@ -76,10 +74,10 @@ public class Data {
         }).collect(Collectors.toList());
 
         int count = 0;
-        while(!threadResult.isDone()) {}
         try {
             count = threadResult.get();
         } catch (InterruptedException e) {
+            threadResult.cancel(true);
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();

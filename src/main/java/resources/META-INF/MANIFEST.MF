@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Class-Path: lib/commons-io-2.4.jar lib/mysql-connector-java-5.1.38-bin
+ .jar lib/commons-pool2-2.3.jar lib/IKAnalyzer2012_u6.jar lib/javatupl
+ es-1.2.jar lib/fastjson-1.2.9.jar lib/jedis-2.8.0.jar lib/commons-lan
+ g.jar
+Main-Class: Main
+

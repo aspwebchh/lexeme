@@ -2,6 +2,9 @@
   "server_port": "port",
   "database_url" : "jdbc:MySQL://host:port/database?characterEncoding=utf8",
   "database_user" : "user",
-  "database_password" : "password"
+  "database_password" : "password",
+  "redis_enable": "0",
+  "redis_host":"host",
+  "redis_port": "port"
 }
 //此文件作为配置文件内容的模板，配置文件的真实名称是config.json，因为怕配置文件中的敏感数据泄露，又不想每次提交代码还要过滤掉配置文件，因此配置文件已经忽略上传，取而代之的是此配置文件模板

@@ -36,17 +36,12 @@ public class DbHelper {
     public static Connection getConnection() {
         Connection conn = null;
         try {
-            String driver = "com.mysql.jdbc.Driver";
             String url = config.getDatabaseUrl();
             String user = config.getDatabaseUser();
             String password = config.getDatabasePassword();
-            Class.forName(driver);
             if (null == conn) {
                 conn = DriverManager.getConnection(url, user, password);
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println("Sorry,can't find the Driver!");
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -111,6 +106,11 @@ public class DbHelper {
 
     public static Object getSingle( String sql ) {
         List<Map> result = executeQuery( sql );
+        return getSingle(result);
+    }
+
+    public static Object getSingle( String sql ,Object... obj) {
+        List<Map> result = executeQuery( sql, obj );
         return getSingle(result);
     }
 

@@ -1,0 +1,24 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="chhblog_lexeme:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/chhblog_lexeme_jar</output-path>
+    <root id="root">
+      <element id="archive" name="chhblog_lexeme.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/src/main/java/resources/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="chhblog_lexeme" />
+      </element>
+      <element id="directory" name="lib">
+        <element id="library" level="project" name="Maven: com.alibaba:fastjson:1.2.47" />
+        <element id="library" level="project" name="IKAnalyzer2012_u6" />
+        <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:2.6.0" />
+        <element id="library" level="project" name="Maven: commons-io:commons-io:2.6" />
+        <element id="library" level="project" name="Maven: mysql:mysql-connector-java:8.0.11" />
+        <element id="library" level="project" name="Maven: org.apache.commons:commons-pool2:2.3" />
+        <element id="library" level="project" name="Maven: org.apache.commons:commons-lang3:3.7" />
+        <element id="library" level="project" name="Maven: org.javatuples:javatuples:1.2" />
+        <element id="library" level="project" name="Maven: redis.clients:jedis:2.8.0" />
+      </element>
+    </root>
+  </artifact>
+</component>

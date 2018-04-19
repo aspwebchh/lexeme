@@ -6,11 +6,14 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
 import common.Config;
+import data.Cache;
 import web.*;
 
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        Cache.init();
+
         Config config = Config.fromFile();
         HttpServer server = HttpServer.create(new InetSocketAddress(config.getServerPort()), 0);
         server.createContext("/create", new CreateWordHandler());

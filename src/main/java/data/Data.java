@@ -5,7 +5,6 @@ import common.Text2Word;
 import org.apache.commons.lang3.ArrayUtils;
 import org.javatuples.KeyValue;
 
-import java.sql.CallableStatement;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -20,34 +19,89 @@ public class Data {
         }
     }
 
+    private static KeyValue<String,Integer> Save( String word, int count,int type, int dataId, int sysId) {
+        final String sql = "insert into word(word) values (?) ON DUPLICATE KEY UPDATE word= ?";
+        DbHelper.executeNonQuery(sql,word,word);
+
+        final String sql1 = "select id from word where word = ?";
+        final Object wordId = DbHelper.getSingle(sql1, word);
+        final int iWordId = Integer.parseInt(wordId.toString());
+
+        final String sql2 = "insert into word_dic( word_id, count, data_id, type, sys_id) value ( ?, ?, ?, ?, ?)";
+        DbHelper.executeNonQuery(sql2,iWordId,count,dataId,type,sysId);
+
+        return KeyValue.with(word, iWordId);
+    }
+
     public static void create(String text, int type, int dataId, int sysId) {
         Text2Word text2Word = new Text2Word();
         List<KeyValue<String,Integer>> wordInfo =  text2Word.convert(text);
-        String[] wordTextItems = wordInfo.stream().map( n->n.getKey() + "," + n.getValue() ).toArray(String[]::new);
-        String wordText = String.join("|",wordTextItems);
-        DbHelper.procCall(conn -> {
-            CallableStatement callStmt =  conn.prepareCall("{call p_index_word(?,?,?,?)}");
-            callStmt.setString(1,wordText);
-            callStmt.setInt(2,dataId);
-            callStmt.setInt(3,type);
-            callStmt.setInt(4,sysId);
-            return callStmt;
-        });
+        List<Callable<KeyValue<String,Integer>>> tasks = new ArrayList<>();
+        for (KeyValue<String,Integer> wordInfoItem : wordInfo) {
+            String word = wordInfoItem.getKey();
+            int count = wordInfoItem.getValue();
+            Callable<KeyValue<String,Integer>>  task = () -> Save(word,count,type,dataId,sysId);
+            tasks.add(task);
+        }
+        ExecutorService executor = Executors.newCachedThreadPool();
+        try {
+            List<Future<KeyValue<String,Integer>>> futures = executor.invokeAll(tasks);
+            List<KeyValue<String,Integer>> result = new ArrayList<>();
+            for(Future<KeyValue<String,Integer>> future : futures) {
+                try {
+                    KeyValue<String,Integer> value = future.get();
+                    result.add(value);
+                } catch (ExecutionException e) {
+                    future.cancel(true);
+                    e.printStackTrace();
+                }
+            }
+            Cache.updateWord(result);
+        } catch (InterruptedException e) {
+            executor.shutdown();
+            e.printStackTrace();
+        }
     }
 
-    private static int[] getWordId(String[] words) {
-        if( words == null || words.length == 0 ) {
-            return new int[0];
-        }
-        String whereString = "'" + String.join("','",words) + "'";
-        String sql = "select id from word where word in ("+ whereString +")";
-        List<Map> mapForWordId =  DbHelper.executeQuery(sql);
-        if(mapForWordId == null) {
-            return new int[0];
-        }
-        int[] wordIDs = mapForWordId.stream().mapToInt(n->Integer.parseInt(n.get("id").toString())).toArray();
-        return wordIDs;
+//    public static void create(String text, int type, int dataId, int sysId) {
+//        Text2Word text2Word = new Text2Word();
+//        List<KeyValue<String,Integer>> wordInfo =  text2Word.convert(text);
+//        String[] wordTextItems = wordInfo.stream().map( n->n.getKey() + "," + n.getValue() ).toArray(String[]::new);
+//        String wordText = String.join("|",wordTextItems);
+//        DbHelper.procCall(conn -> {
+//            CallableStatement callStmt =  conn.prepareCall("{call p_index_word(?,?,?,?)}");
+//            callStmt.setString(1,wordText);
+//            callStmt.setInt(2,dataId);
+//            callStmt.setInt(3,type);
+//            callStmt.setInt(4,sysId);
+//            return callStmt;
+//        });
+//    }
+
+    static int getWordCount() {
+        String sql = "select count(1) from word";
+        Object result = DbHelper.getSingle(sql);
+        return Integer.parseInt(result.toString());
     }
+
+    static List<Map> getWordList( String limit) {
+        String sql = "select id, word from word limit " + limit;
+        return DbHelper.executeQuery(sql);
+    }
+
+//    private static int[] getWordId(String[] words) {
+//        if( words == null || words.length == 0 ) {
+//            return new int[0];
+//        }
+//        String whereString = "'" + String.join("','",words) + "'";
+//        String sql = "select id from word where word in ("+ whereString +")";
+//        List<Map> mapForWordId =  DbHelper.executeQuery(sql);
+//        if(mapForWordId == null) {
+//            return new int[0];
+//        }
+//        int[] wordIDs = mapForWordId.stream().mapToInt(n->Integer.parseInt(n.get("id").toString())).toArray();
+//        return wordIDs;
+//    }
 
     private static FoundResult getDataId(int[] wordId, int sysId, int type, int pageIndex, int pageSize ) {
         if( wordId.length == 0 ) {
@@ -93,7 +147,7 @@ public class Data {
             return FoundResult.empty();
         }
         String[] wordItems = words.stream().map(n->n.getKey()).collect(Collectors.toList()).toArray(new String[words.size()]);
-        int[] wordIDs = getWordId(wordItems);
+        int[] wordIDs = Cache.getWordId(wordItems);
         return getDataId(wordIDs, sysId, type, pageIndex, pageSize);
     }
 

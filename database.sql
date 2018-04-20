@@ -1,0 +1,1 @@
+SET GLOBAL group_concat_max_len = 1024000;

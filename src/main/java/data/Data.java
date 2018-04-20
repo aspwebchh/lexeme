@@ -19,6 +19,38 @@ public class Data {
         }
     }
 
+    static List<Map> getDataIdByWord() {
+        String sql = " select t.data_id,word.word from (\n" +
+                "  SELECT\n" +
+                "    word_id,\n" +
+                "    group_concat(DISTINCT(data_id)) as data_id\n" +
+                "  FROM word_dic\n" +
+                "  GROUP BY word_id\n" +
+                ") as t LEFT JOIN word on id = t.word_id";
+        List<Map> result = DbHelper.executeQuery(sql);
+        return result;
+    }
+
+    static List<Map> getDataIdByType(){
+        String sql = "SELECT\n" +
+                    "    type,\n" +
+                    "    group_concat( DISTINCT( data_id )) as data_id\n" +
+                    "  FROM word_dic\n" +
+                    "  GROUP BY type";
+        List<Map> result = DbHelper.executeQuery(sql);
+        return result;
+    }
+
+    static List<Map> getDataIdBySysId(){
+        String sql = "SELECT\n" +
+                "    sys_id,\n" +
+                "    group_concat( DISTINCT( data_id )) as data_id\n" +
+                "  FROM word_dic\n" +
+                "  GROUP BY sys_id";
+        List<Map> result = DbHelper.executeQuery(sql);
+        return result;
+    }
+
     private static KeyValue<String,Integer> Save( String word, int count,int type, int dataId, int sysId) {
         final String sql = "insert into word(word) values (?) ON DUPLICATE KEY UPDATE word= ?";
         DbHelper.executeNonQuery(sql,word,word);
@@ -63,21 +95,6 @@ public class Data {
         }
     }
 
-//    public static void create(String text, int type, int dataId, int sysId) {
-//        Text2Word text2Word = new Text2Word();
-//        List<KeyValue<String,Integer>> wordInfo =  text2Word.convert(text);
-//        String[] wordTextItems = wordInfo.stream().map( n->n.getKey() + "," + n.getValue() ).toArray(String[]::new);
-//        String wordText = String.join("|",wordTextItems);
-//        DbHelper.procCall(conn -> {
-//            CallableStatement callStmt =  conn.prepareCall("{call p_index_word(?,?,?,?)}");
-//            callStmt.setString(1,wordText);
-//            callStmt.setInt(2,dataId);
-//            callStmt.setInt(3,type);
-//            callStmt.setInt(4,sysId);
-//            return callStmt;
-//        });
-//    }
-
     static int getWordCount() {
         String sql = "select count(1) from word";
         Object result = DbHelper.getSingle(sql);
@@ -88,20 +105,6 @@ public class Data {
         String sql = "select id, word from word limit " + limit;
         return DbHelper.executeQuery(sql);
     }
-
-//    private static int[] getWordId(String[] words) {
-//        if( words == null || words.length == 0 ) {
-//            return new int[0];
-//        }
-//        String whereString = "'" + String.join("','",words) + "'";
-//        String sql = "select id from word where word in ("+ whereString +")";
-//        List<Map> mapForWordId =  DbHelper.executeQuery(sql);
-//        if(mapForWordId == null) {
-//            return new int[0];
-//        }
-//        int[] wordIDs = mapForWordId.stream().mapToInt(n->Integer.parseInt(n.get("id").toString())).toArray();
-//        return wordIDs;
-//    }
 
     private static FoundResult getDataId(int[] wordId, int sysId, int type, int pageIndex, int pageSize ) {
         if( wordId.length == 0 ) {

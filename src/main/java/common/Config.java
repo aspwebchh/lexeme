@@ -16,8 +16,9 @@ public class Config {
     private final String redisEnable;
     private final String redisHost;
     private final String redisPort;
+    private final String redisPassword;
 
-    public Config( String databaseUrl, String databaseUser, String databasePassword, String serverPort,String redisEnable,  String redisHost, String redisPort) {
+    public Config( String databaseUrl, String databaseUser, String databasePassword, String serverPort,String redisEnable,  String redisHost, String redisPort, String redisPassword) {
         this.databaseUrl = databaseUrl;
         this.databaseUser = databaseUser;
         this.databasePassword = databasePassword;
@@ -25,6 +26,7 @@ public class Config {
         this.redisEnable = redisEnable;
         this.redisHost = redisHost;
         this.redisPort = redisPort;
+        this.redisPassword = redisPassword;
     }
 
     public int getServerPort() throws InvalidObjectException {
@@ -48,6 +50,10 @@ public class Config {
 
     public String getRedisHost() {
         return redisHost;
+    }
+
+    public String getRedisPassword() {
+        return redisPassword;
     }
 
     public int getRedisPort() throws InvalidObjectException {
@@ -75,8 +81,8 @@ public class Config {
         items.add("redisEnable:" + this.redisEnable);
         items.add("redisHost:" + this.redisHost);
         items.add("redisPort:" + this.redisPort);
+        items.add("redisPassword:" + this.redisPassword);
         return String.join("\n", items.toArray(new String[items.size()]));
-        //return databaseUrl + "|" + databaseUser + "|" + databasePassword;
     }
 
     public static Config fromFile()  {
@@ -95,10 +101,11 @@ public class Config {
             final String redisEnable = configData.getString("redis_enable");
             final String redisHost = configData.getString("redis_host");
             final String redisPort = configData.getString("redis_port");
-            Config config = new Config(databaseUrl,databaseUser,databasePassword, serverPort, redisEnable,redisHost, redisPort);
+            final String redisPassword = configData.getString("redis_password");
+            Config config = new Config(databaseUrl,databaseUser,databasePassword, serverPort, redisEnable,redisHost, redisPort, redisPassword);
             return config;
         } catch (Exception e) {
-            return new Config("","","","","","","");
+            return new Config("","","","","","","","");
         }
     }
 }

@@ -60,6 +60,7 @@ public class DbHelper {
             result = stmt.executeUpdate(sql);
         } catch (SQLException err) {
             err.printStackTrace();
+        } finally {
             free(null, stmt, conn);
         }
         return result;
@@ -78,6 +79,7 @@ public class DbHelper {
             result = pstmt.executeUpdate();
         } catch (SQLException err) {
             err.printStackTrace();
+        } finally {
             free(null, pstmt, conn);
         }
         return result;
@@ -99,6 +101,7 @@ public class DbHelper {
             result = Integer.parseInt(getSingle(list).toString());
         } catch (SQLException err) {
             err.printStackTrace();
+        } finally {
             free(null, pstmt, conn);
         }
         return result;

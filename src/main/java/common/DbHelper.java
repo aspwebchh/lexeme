@@ -11,7 +11,7 @@ public class DbHelper {
     public static Config config ;
 
     static {
-        config   = Config.fromFile();
+        config   = Config.get();
     }
 
     private static List<Map> resultSet2List(ResultSet rs) {

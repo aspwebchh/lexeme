@@ -1,7 +1,10 @@
 Manifest-Version: 1.0
-Class-Path: lib/IKAnalyzer2012_u6.jar lib/javatuples-1.2.jar lib/commo
- ns-io-2.6.jar lib/commons-lang3-3.7.jar lib/protobuf-java-2.6.0.jar l
- ib/mysql-connector-java-8.0.11.jar lib/commons-pool2-2.3.jar lib/fast
- json-1.2.47.jar lib/jedis-2.8.0.jar
+Class-Path: lib/commons-lang3-3.7.jar lib/protobuf-java-2.6.0.jar lib/
+ IKAnalyzer2012_u6.jar lib/fastjson-1.2.47.jar lib/jedis-2.8.0.jar lib
+ /spring-beans-5.0.5.RELEASE.jar lib/javatuples-1.2.jar lib/spring-con
+ text-5.0.5.RELEASE.jar lib/commons-io-2.6.jar lib/spring-core-5.0.5.R
+ ELEASE.jar lib/commons-pool2-2.3.jar lib/spring-aop-5.0.5.RELEASE.jar
+  lib/mysql-connector-java-8.0.11.jar lib/spring-expression-5.0.5.RELE
+ ASE.jar lib/spring-jcl-5.0.5.RELEASE.jar
 Main-Class: Main
 

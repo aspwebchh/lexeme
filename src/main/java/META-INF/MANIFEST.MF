@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Class-Path: commons-lang3-3.7.jar protobuf-java-2.6.0.jar IKAnalyzer20
+ 12_u6.jar fastjson-1.2.47.jar jedis-2.8.0.jar spring-beans-5.0.5.RELE
+ ASE.jar javatuples-1.2.jar spring-context-5.0.5.RELEASE.jar commons-i
+ o-2.6.jar spring-core-5.0.5.RELEASE.jar commons-pool2-2.3.jar spring-
+ aop-5.0.5.RELEASE.jar mysql-connector-java-8.0.11.jar spring-expressi
+ on-5.0.5.RELEASE.jar spring-jcl-5.0.5.RELEASE.jar
+Main-Class: Main
+

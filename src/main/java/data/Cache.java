@@ -23,19 +23,15 @@ public class Cache {
     private static JedisPool jedisPool;
 
     static {
-        Config config = Config.fromFile();
+        Config config = Config.get();
         isRedisEnable = config.isRedisEnable();
         if (isRedisEnable) {
-            try {
-                String redisHost = config.getRedisHost();
-                String redisPwd = config.getRedisPassword();
-                int redisPort = config.getRedisPort();
-                JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-                jedisPoolConfig.setMaxTotal(10);
-                jedisPool = new JedisPool(jedisPoolConfig, redisHost, redisPort, 2000, redisPwd);
-            } catch (InvalidObjectException e) {
-                e.printStackTrace();
-            }
+            String redisHost = config.getRedisHost();
+            String redisPwd = config.getRedisPassword();
+            int redisPort = config.getRedisPortAsInt();
+            JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+            jedisPoolConfig.setMaxTotal(10);
+            jedisPool = new JedisPool(jedisPoolConfig, redisHost, redisPort, 2000, redisPwd);
         }
     }
 

@@ -3,7 +3,9 @@
 import com.sun.net.httpserver.HttpServer;
 import common.Config;
 import data.Cache;
-import web.*;
+import web.CreateWordHandler;
+import web.DelWordHandler;
+import web.FindWordHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

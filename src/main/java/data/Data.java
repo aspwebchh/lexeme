@@ -4,6 +4,7 @@ import common.DbHelper;
 import common.Text2Word;
 import org.apache.commons.lang3.ArrayUtils;
 import org.javatuples.KeyValue;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 import java.util.concurrent.*;

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--build.xml中的第一句话，没有实际的意义-->
+<!--Ant的所有内容必须包含在<project></project>里面，name是你给它取的名字，basedir指工作的根目录，.代表当前目录，default代表默认要做的事情。-->
+<project name="lexeme" default="release" basedir=".">
+    <!--<property />设置变量-->
+    <property name="release-dir" value="release" />
+    <property name="src" value="src"/>
+    <property name="dest" value="${release-dir}/classes"/>
+    <property name="lexeme-jar" value="${release-dir}/lexeme.jar"/>
+    <property name="jar-lib" value="${release-dir}/lib"/>
+    <property name="lib" value="lib"/>
+    <property name="config-file" value="./applicationContext.xml"/>
+
+    <path id="compile.classpath">
+        <fileset dir="${jar-lib}">  <!-- 编译java程序用到的第三方包所在的目录 -->
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <target name="copy">
+        <copy todir="${jar-lib}">
+            <fileset dir="./lib">  <!-- 编译java程序用到的第三方包所在的目录 -->
+                <include name="*.jar" />
+            </fileset>
+
+        </copy>
+        <copy todir="${release-dir}">
+            <file name="${config-file}" />
+        </copy>
+    </target>
+
+    <!--每个target代表你想做的操作，给这个操作命名，及name值，depends是它所依赖的target在执行这个target，例如这里的compile之前ant会先检查init是否曾经被执行过，如果执行
+        过则直接直接执行compile，如果没有则会先执行它依赖的target例如这里的init，然后在执行这个target-->
+    <!--新建文件夹-->
+    <target name="init">
+        <mkdir dir="${release-dir}"/>
+        <mkdir dir="${jar-lib}"/>
+        <mkdir dir="${dest}"/>
+    </target>
+
+    <!--开始运行编译-->
+    <target name="compile" depends="init">
+        <javac srcdir="${src}" destdir="${dest}">
+            <classpath refid="compile.classpath" />
+        </javac>
+    </target>
+    <!--创建jar包-->
+    <target name="build" depends="compile">
+        <pathconvert property="mf.classpath" pathsep=" ">
+            <mapper>
+                <chainedmapper>
+                    <!-- jar包文件只留文件名，去掉目录信息 -->
+                    <flattenmapper/>
+                    <!-- add lib/ prefix -->
+                    <globmapper from="*" to="${lib}/*"/>
+                </chainedmapper>
+            </mapper>
+            <path refid="compile.classpath"/>
+        </pathconvert>
+        <jar jarfile="${lexeme-jar}" basedir="${dest}">
+            <manifest>
+                <attribute name="Main-Class" value="Main" />
+                <attribute name="Class-Path" value="${mf.classpath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="release" depends="clean,init,copy,compile,build"/>
+
+    <!--删除生成的文件-->
+    <target name="clean">
+        <delete dir="${dest}"/>
+        <delete file="${lexeme-jar}"/>
+        <delete dir="${jar-lib}"/>
+        <delete dir="${release-dir}"/>
+
+    </target>
+
+</project>
